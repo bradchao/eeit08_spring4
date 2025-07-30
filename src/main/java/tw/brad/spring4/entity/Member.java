@@ -19,6 +19,7 @@ public class Member {
 	
 	@Lob
 	private byte[] icon;
+	
 
 	public Long getId() {
 		return id;
@@ -59,8 +60,7 @@ public class Member {
 	public void setIcon(byte[] icon) {
 		this.icon = icon;
 	}
-	
-	
+
 	
 	
 }
