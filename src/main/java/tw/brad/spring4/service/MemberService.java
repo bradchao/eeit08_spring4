@@ -1,20 +1,20 @@
 package tw.brad.spring4.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import tw.brad.spring4.entity.Member;
 import tw.brad.spring4.repository.MemberRepository;
+import tw.brad.spring4.utils.BCrypt;
 
 @Service
 public class MemberService {
 	@Autowired
 	private MemberRepository repository;
 	
-	@Autowired
-	private BCryptPasswordEncoder passwdEncoder;
+//	@Autowired
+//	private BCryptPasswordEncoder passwdEncoder;
 	
 	public Member register(
 		String account, String passwd, String name, MultipartFile iconFile)
@@ -24,7 +24,7 @@ public class MemberService {
 			throw new Exception();
 		}
 		
-		String hashPasswd = passwdEncoder.encode(passwd);
+		String hashPasswd = BCrypt.hashpw(passwd, BCrypt.gensalt());
 		byte[] icon = iconFile != null && !iconFile.isEmpty() ? iconFile.getBytes() : null;
 		
 		Member member = new Member();
