@@ -3,6 +3,9 @@ package tw.brad.spring4.controller;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+import tw.brad.spring4.entity.Hotel;
 import tw.brad.spring4.entity.Member;
+import tw.brad.spring4.repository.HotelRepository;
 import tw.brad.spring4.repository.MemberRepository;
 import tw.brad.spring4.service.MemberService;
 
@@ -69,8 +74,14 @@ public class MemberController {
 		return "login";
 	}
 	
+	@Autowired
+	private HotelRepository hotelRepository;
+	
 	@GetMapping("/home")
-	public String home(HttpSession session, Model model) {
+	public String home(
+			HttpSession session, Model model,
+			@RequestParam(defaultValue = "0") int page, 
+			@RequestParam(defaultValue = "10") int size) {
 		Member member = (Member)session.getAttribute("member");
 		if (member == null) return "redirect:/login";
 		
@@ -78,6 +89,13 @@ public class MemberController {
 		
 		model.addAttribute("member", member);
 		model.addAttribute("icon", base64);
+		
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Hotel> pageHotel = hotelRepository.findAll(pageable);
+		
+		model.addAttribute("hotelPage", pageHotel);
+		model.addAttribute("page", page);
+		
 		
 		return "home";
 	}
